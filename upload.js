@@ -1,5 +1,10 @@
-const restify = require('restify');
+const P = require('bluebird');
+const auth = require('./lib/auth');
+const crypto = require('crypto');
+const fse = require('fs-extra-promise');
 const os = require('os');
+const path = require('path');
+const restify = require('restify');
 
 module.exports = [
   restify.bodyParser({
@@ -14,8 +19,31 @@ module.exports = [
   upload
 ]
 
-function upload(req, res, next) {
-  console.warn(req.files);
-  res.send('ok');
-  next();
+async function upload(req, res, next) {
+  const tok = await auth(req);
+  const absdir = path.resolve(tok.team_id, tok.user_id);
+  const dir = path.relative(__dirname, absdir);
+
+  await fse.mkdirsAsync(dir)
+
+  try {
+    res.send(await P.map(Object.keys(req.files), key => {
+      const file = req.files[key]
+      const newname = `${crypto.randomBytes(4).toString('hex').toUpperCase()}.${extFor(file.type)}`;
+      return fse.moveAsync(file.path, path.resolve(absdir, newname)).then(() => ({ path: `${dir}/${newname}`, name: file.name }))
+    }))
+
+    next();
+  } catch(e) {
+    next(e);
+  }
+}
+
+function extFor(type) {
+  const m = /^image\/(.*)/.exec(type)
+  if (m) {
+    return m[1];
+  } else {
+    throw new Error(`${type} is not a recognized type`);
+  }
 }
