@@ -9,12 +9,14 @@ server.use(restify.CORS({
     credentials: true
 }));
 
-server.post('/-/upload', require('./upload'))
 
 server.use(restify.CORS());
 
 server.post('/-/login', restify.bodyParser(), require('./login'));
+
 server.get('/-/session/:session', require('./session'));
+
+server.post('/-/upload', require('./upload'))
 server.opts('/-/upload', (req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Headers', 'Origin, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, Authorization');
