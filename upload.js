@@ -20,13 +20,14 @@ module.exports = [
 ]
 
 async function upload(req, res, next) {
-  const tok = await auth(req);
-  const absdir = path.resolve(tok.team_id, tok.user_id);
-  const dir = path.relative(__dirname, absdir);
-
-  await fse.mkdirsAsync(dir)
-
   try {
+    const tok = await auth(req);
+    if (!tok) return next(new Error("no token"));
+    const absdir = path.resolve(tok.team_id, tok.user_id);
+    const dir = path.relative(__dirname, absdir);
+
+    await fse.mkdirsAsync(dir)
+
     res.send(await P.map(Object.keys(req.files), key => {
       const file = req.files[key]
       const newname = `${crypto.randomBytes(4).toString('hex').toUpperCase()}.${extFor(file.type)}`;
