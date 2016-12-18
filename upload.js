@@ -31,7 +31,7 @@ async function upload(req, res, next) {
     res.send(await P.map(Object.keys(req.files), key => {
       const file = req.files[key]
       const newname = `${crypto.randomBytes(4).toString('hex').toUpperCase()}.${extFor(file.type)}`;
-      return fse.moveAsync(file.path, path.resolve(absdir, newname)).then(() => ({ path: `${dir}/${newname}`, name: file.name }))
+      return fse.moveAsync(file.path, path.resolve(absdir, newname)).then(() => ({ path: `/-/files/${dir}/${newname}`, name: file.name }))
     }))
 
     next();
