@@ -14,6 +14,10 @@ server.use(restify.CORS());
 
 server.post('/-/login', restify.bodyParser(), require('./login'));
 
+server.get('/-/files/:team/:user/:file', (req, res, next) => {
+  next();
+})
+
 server.get('/-/session/:session', require('./session'));
 
 server.post('/-/upload', require('./upload'))
