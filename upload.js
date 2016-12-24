@@ -34,7 +34,7 @@ async function upload(req, res, next) {
       const ext = extFor(file.type);
       return P.join(
         fse.moveAsync(file.path, path.resolve(absdir, `${newname}.${ext}`)),
-        fse.writeJsonAsync(path.resolve(absdir,`${newname}.json`), { user: tok.user_id, team: tok.team_id, type: file.type })
+        fse.writeJsonAsync(path.resolve(absdir,`${newname}.json`), { user: tok.user_id, team: tok.team_id, file: newname, name: file.name, type: file.type })
       ).then(() => ({ path: `/-/files/${dir}/${newname}.${ext}`, name: file.name }))
     }))
 
