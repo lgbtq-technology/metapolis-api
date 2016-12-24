@@ -1,5 +1,6 @@
 const fse = require('fs-extra-promise');
 const path = require('path');
+const pump = require('pump');
 
 module.exports = async (req, res, next) => {
     try {
@@ -11,7 +12,7 @@ module.exports = async (req, res, next) => {
         const file = req.params.file;
         const metadata = await fse.readJsonAsync(path.resolve(dir, path.basename(file, path.extname(file))) + '.json');
         res.setHeader('Content-Type', metadata.type);
-        fse.createReadStream(path.resolve(dir, file)).pipe(res).on('end', next).on('error', err => next(err));
+        pump(fse.createReadStream(path.resolve(dir, file)), res, next);
     } catch (e) {
         next(e);
     }
