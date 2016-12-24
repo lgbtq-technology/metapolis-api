@@ -15,6 +15,7 @@ server.use(restify.CORS());
 server.post('/-/login', restify.bodyParser(), require('./login'));
 
 server.get('/-/files/:team/:user/:file', require('./serve-file'));
+server.get('/-/metadata/:team/:user/:file', require('./metadata'));
 
 server.get('/-/session/:session', require('./session'));
 
