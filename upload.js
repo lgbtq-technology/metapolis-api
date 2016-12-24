@@ -32,10 +32,11 @@ async function upload(req, res, next) {
       const file = req.files[key]
       const newname = crypto.randomBytes(4).toString('hex').toUpperCase();
       const ext = extFor(file.type);
+      const meta = { user: tok.user_id, team: tok.team_id, file: newname, name: file.name, type: file.type, path: `/-/files/${dir}/${newname}.${ext}` };
       return P.join(
         fse.moveAsync(file.path, path.resolve(absdir, `${newname}.${ext}`)),
-        fse.writeJsonAsync(path.resolve(absdir,`${newname}.json`), { user: tok.user_id, team: tok.team_id, file: newname, name: file.name, type: file.type })
-      ).then(() => ({ path: `/-/files/${dir}/${newname}.${ext}`, name: file.name }))
+        fse.writeJsonAsync(path.resolve(absdir,`${newname}.json`), meta)
+      ).then(() => meta)
     }))
 
     next();
