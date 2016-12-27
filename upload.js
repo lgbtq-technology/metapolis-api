@@ -39,6 +39,7 @@ async function upload(req, res, next) {
         name: file.name,
         type: file.type,
         unfurl: req.params.unfurl == 'true',
+        title: req.params.title,
         path: `/-/files/${dir}/${newname}.${ext}`
       };
       return P.join(
