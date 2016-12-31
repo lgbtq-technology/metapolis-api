@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node ."
+    "start": "node .",
+    "test": "tap test"
   },
   "repository": {
     "type": "git",
@@ -38,5 +39,8 @@
       "node": true,
       "es6": true
     }
+  },
+  "devDependencies": {
+    "tap": "^8.0.1"
   }
 }
