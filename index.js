@@ -19,7 +19,7 @@ server.get('/-/metadata/:team/:user/:file', require('./metadata'));
 
 server.get('/-/session/:session', require('./session'));
 
-server.post('/-/upload', require('./upload'))
+server.post('/-/upload', require('./upload')())
 server.opts('/-/upload', (req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Headers', 'Origin, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, Authorization');
