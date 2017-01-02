@@ -19,7 +19,9 @@ const withFixtures = require('with-fixtures');
 P.promisifyAll(restify.JsonClient.prototype);
 
 tap.test('upload handler', async t => {
-  const root = await fs.mkdtempAsync(os.tmpdir());
+
+  const rootFixture = tempdirFixture();
+  const root = (await rootFixture).dir;
 
   const handler = upload({
     root
@@ -31,9 +33,7 @@ tap.test('upload handler', async t => {
 
   await withFixtures([
     s,
-    {
-      done: () => fs.remove(root)
-    }
+    rootFixture
   ], async () => {
     const url = (await s).url
     const form = new FormData();
@@ -70,3 +70,11 @@ tap.test('teardown', async () => {
   await pool.drain()
   pool.clear();
 });
+
+async function tempdirFixture() {
+  const dir = await fs.mkdtempAsync(os.tmpdir());
+  return {
+    done: () => fs.remove(dir),
+    dir
+  };
+}
