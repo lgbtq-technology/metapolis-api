@@ -28,10 +28,10 @@ module.exports = function config(opts) {
     try {
       const tok = await auth(req);
       if (!tok) return next(new Error("no token"));
-      const absdir = path.resolve(tok.team_id, tok.user_id);
+      const absdir = path.resolve(root, tok.team_id, tok.user_id);
       const dir = path.relative(root, absdir);
 
-      await fse.mkdirsAsync(dir)
+      await fse.mkdirsAsync(absdir)
 
       res.send(await P.map(Object.keys(req.files), key => {
         const file = req.files[key]
