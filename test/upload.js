@@ -44,7 +44,6 @@ tap.test('upload handler', async t => {
     })));
 
     form.append('file-1', fs.createReadStream(path.resolve(__dirname, 'test.jpg')));
-    form.append('sid', 'deadbeef');
     form.append('unfurl', 'false');
     form.append('title', 'Test 123');
 
