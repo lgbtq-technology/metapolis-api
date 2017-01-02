@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node ."
+    "start": "node .",
+    "test": "spawn-require async-to-gen/register -- tap test"
   },
   "repository": {
     "type": "git",
@@ -38,5 +39,18 @@
       "node": true,
       "es6": true
     }
+  },
+  "devDependencies": {
+    "form-data": "^2.1.2",
+    "redis-mock": "^0.16.0",
+    "restify-test-fixture": "^1.0.3",
+    "spawn-require": "^0.1.0",
+    "tap": "^8.0.1",
+    "with-fixtures": "^1.1.0"
+  },
+  "nyc": {
+    "require": [
+      "async-to-gen/register"
+    ]
   }
 }
