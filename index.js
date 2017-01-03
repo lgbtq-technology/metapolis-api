@@ -19,6 +19,8 @@ server.get('/-/metadata/:team/:user/:file', require('./metadata'));
 
 server.get('/-/session/:session', require('./session'));
 
+server.get('/-/files.list', require('./list'));
+
 server.post('/-/upload', require('./upload')())
 server.opts('/-/upload', (req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
