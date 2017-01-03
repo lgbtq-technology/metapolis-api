@@ -42,6 +42,7 @@
   },
   "devDependencies": {
     "form-data": "^2.1.2",
+    "mixed-fixtures": "^1.0.0",
     "redis-mock": "^0.16.0",
     "restify-test-fixture": "^1.0.3",
     "spawn-require": "^0.1.0",

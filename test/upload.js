@@ -7,7 +7,6 @@ const FormData = require('form-data');
 const P = require('bluebird');
 const fetch = require('node-fetch');
 const fs = require('fs-extra-promise');
-const os = require('os');
 const path = require('path');
 const pool = require('@npmcorp/redis-pool');
 const restify = require('restify');
@@ -15,6 +14,7 @@ const restifyFixture = require('restify-test-fixture');
 const tap = require('tap');
 const upload = require('../upload')
 const withFixtures = require('with-fixtures');
+const { tempdirFixture } = require('mixed-fixtures');
 
 P.promisifyAll(restify.JsonClient.prototype);
 
@@ -58,10 +58,12 @@ tap.test('upload handler', async t => {
     t.ok(Array.isArray(metadata), 'metadata is an array');
     t.equal(metadata.length, 1, 'metadata has one entry');
 
-    const copied = await fs.readFileAsync(path.resolve(root, 'TTEST', 'UTEST', metadata[0].file + '.jpeg'))
+    const copied = fs.readFileAsync(path.resolve(root, 'TTEST', 'UTEST', metadata[0].file + '.jpeg'))
+    const original = fs.readFileAsync(path.resolve(__dirname, 'test.jpg'))
+    const filemetadata = fs.readJsonAsync(path.resolve(root, 'TTEST', 'UTEST', metadata[0].file + '.json'))
 
-    t.ok(copied.equals(await fs.readFileAsync(path.resolve(__dirname, 'test.jpg'))), 'file data is the same');
-    t.ok(fs.readJsonAsync(path.resolve(root, 'TTEST', 'UTEST', metadata[0].file + '.json')), 'metadata file is JSON');
+    t.ok((await copied).equals(await original), 'file data is the same');
+    t.ok(await filemetadata, 'metadata file is JSON');
   });
 })
 
@@ -69,11 +71,3 @@ tap.test('teardown', async () => {
   await pool.drain()
   pool.clear();
 });
-
-async function tempdirFixture() {
-  const dir = await fs.mkdtempAsync(os.tmpdir());
-  return {
-    done: () => fs.remove(dir),
-    dir
-  };
-}
