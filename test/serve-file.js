@@ -18,13 +18,9 @@ tap.test('serve-file handler', async t => {
   const rootFixture = tempdirFixture();
   const filesFixture = testImageFixture(rootFixture);
 
-  /*
   const handler = serveFile({
-    root
+    root: await (await rootFixture).dir
   })
-  */
-
-  const handler = serveFile;
 
   const s = restifyFixture(server => {
     server.get('/-/files/:team/:user/:file', handler);
