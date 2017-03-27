@@ -21,3 +21,10 @@ module.exports = function (opts) {
     };
 };
 
+module.exports.metadataForImage = async function metadataForImage(dir, file) {
+    dir = path.normalize(dir);
+    file = path.normalize(path.resolve(dir, file));
+    if (file.indexOf(dir) != 0) throw new Error(`${file} not within ${dir}`);
+    const metadata = await fse.readJsonAsync(path.resolve(dir, path.basename(file, path.extname(file))) + '.json');
+    return metadata;
+}
