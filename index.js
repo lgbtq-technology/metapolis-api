@@ -33,6 +33,12 @@ res.setHeader('Access-Control-Allow-Methods', '*');
   next()
 }
 
+server.on('after', function (req, res, route, err) {
+  if (err) {
+    console.warn('error', err);
+  }
+});
+
 server.listen(process.env.PORT || 3001, function() {
   console.log('%s listening at %s', server.name, server.url);
 });
