@@ -4,13 +4,8 @@ const crypto = require('crypto');
 const fse = require('fs-extra-promise');
 const os = require('os');
 const path = require('path');
-const sharp = require('sharp');
 const restify = require('restify');
-
-const TARGETSIZES = [
-  { w: 256, h: 256 },
-  { w: 1000, h: 1000 }
-];
+const addResizedImages = require('./lib/add-resized-images');
 
 module.exports = function config(opts) {
   opts = opts || {};
@@ -44,35 +39,21 @@ module.exports = function config(opts) {
         const newname = crypto.randomBytes(4).toString('hex').toUpperCase();
         const ext = extFor(file.type);
 
-        const image = fse.readFileAsync(file.path);
         const baseurl = `/-/files/${dir}/${newname}`;
-        const basename = path.resolve(absdir, newname);
-        const sizes = P.reduce(TARGETSIZES, async (out, {w, h}) => {
-          const filename = `${basename}-${w}x${h}.jpeg`;
-          const fileurl = `${baseurl}-${w}x${h}.jpeg`;
-          await sharp(await image)
-                  .resize(w, h)
-                  .toFormat('jpeg')
-                  .toFile(filename);
-          out[`${w}x${h}`] = fileurl;
-          return out;
-        }, {});
 
-        const meta = {
+        await fse.moveAsync(file.path, path.resolve(absdir, `${newname}.${ext}`));
+
+        const meta = await addResizedImages({
           user: tok.user_id,
           team: tok.team_id,
           file: newname,
           name: req.params.title || file.name,
           type: file.type,
           unfurl: req.params.unfurl == 'true',
-          sizes: await sizes,
           path: `${baseurl}.${ext}`
-        };
+        }, root);
 
-        await P.join(
-          fse.moveAsync(file.path, path.resolve(absdir, `${newname}.${ext}`)),
-          fse.writeJsonAsync(path.resolve(absdir,`${newname}.json`), meta)
-        )
+        await fse.writeJsonAsync(path.resolve(absdir,`${newname}.json`), meta);
 
         return meta;
       })
@@ -94,3 +75,4 @@ function extFor(type) {
     throw new Error(`${type} is not a recognized type`);
   }
 }
+
