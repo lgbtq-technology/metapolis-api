@@ -13,46 +13,51 @@ const serveFile = require('../serve-file')
 const withFixtures = require('with-fixtures');
 const { tempdirFixture } = require('mixed-fixtures');
 
-tap.test('serve-file handler', async t => {
+function testPath(path, contentType) {
+  return tap.test('serve-file handler', async t => {
 
-  const rootFixture = tempdirFixture();
-  const filesFixture = testImageFixture(rootFixture);
+    const rootFixture = tempdirFixture();
+    const filesFixture = testImageFixture(rootFixture);
 
-  const handler = serveFile({
-    root: await (await rootFixture).dir
-  })
+    const handler = serveFile({
+      root: await (await rootFixture).dir
+    })
 
-  const s = restifyFixture(server => {
-    server.get('/-/files/:team/:user/:file', handler);
-  });
-
-  await withFixtures([
-    s,
-    filesFixture,
-    rootFixture
-  ], async () => {
-    const url = (await s).url + '/-/files/TTEST/UTEST/test.png';
-
-    await pool.withConnection(c => c.setAsync('deadbeef', JSON.stringify({
-      team_id: 'TTEST',
-      user_id: 'UTEST'
-    })));
-
-    const res = await fetch(url, {
-      method: 'GET',
-      headers: Object.assign({
-	'Authorization': 'Token: deadbeef'
-      })
+    const s = restifyFixture(server => {
+      server.get('/-/files/:team/:user/:file', handler);
     });
 
-    t.equal(res.headers.get('content-type'), 'image/png');
-    t.equal(res.status, 200);
+    await withFixtures([
+      s,
+      filesFixture,
+      rootFixture
+    ], async () => {
+      const url = (await s).url + path;
 
-    if (res.status != 200) {
-      t.equal(await res.json(), null);
-    }
-  });
-})
+      await pool.withConnection(c => c.setAsync('deadbeef', JSON.stringify({
+	team_id: 'TTEST',
+	user_id: 'UTEST'
+      })));
+
+      const res = await fetch(url, {
+	method: 'GET',
+	headers: Object.assign({
+	  'Authorization': 'Token: deadbeef'
+	})
+      });
+
+      t.equal(res.headers.get('content-type'), contentType);
+      t.equal(res.status, 200);
+
+      if (res.status != 200) {
+	t.equal(await res.json(), null);
+      }
+    });
+  })
+}
+
+testPath('/-/files/TTEST/UTEST/test.png', 'image/png');
+testPath('/-/files/TTEST/UTEST/test-256x256.jpeg', 'image/jpeg');
 
 tap.test('teardown', async () => {
   await pool.drain()
