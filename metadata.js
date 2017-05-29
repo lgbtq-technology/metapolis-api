@@ -1,5 +1,6 @@
 const fse = require('fs-extra-promise');
 const path = require('path');
+const addResizedImages = require('./lib/add-resized-images');
 
 module.exports = function (opts) {
     opts = opts || {};
@@ -13,7 +14,7 @@ module.exports = function (opts) {
             }
             const dir = path.resolve(__dirname, req.params.team, req.params.user)
             const file = req.params.file;
-            const metadata = await fse.readJsonAsync(path.resolve(dir, file + '.json'));
+            const metadata = await addResizedImages(fse.readJsonAsync(path.resolve(dir, file + '.json')), root);
             res.json(metadata);
         } catch (e) {
             next(e);
