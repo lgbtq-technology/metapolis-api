@@ -60,8 +60,16 @@ tap.test('upload handler', async t => {
 
     t.ok((await copied).equals(await original), 'file data is the same');
     t.ok(await filemetadata, 'metadata file is JSON');
+
+    t.ok(await fs.existsAsync(u2p(metadata[0].sizes['256x256'])), '256x256 thumbnail exists');
+    t.ok(await fs.existsAsync(u2p(metadata[0].sizes['1000x1000'])), '1000x1000 image exists');
+
+    function u2p(url) {
+      return url.replace('/-/files', root);
+    }
   });
 })
+
 
 tap.test('teardown', async () => {
   await pool.drain()

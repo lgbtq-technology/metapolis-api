@@ -4,7 +4,13 @@ const crypto = require('crypto');
 const fse = require('fs-extra-promise');
 const os = require('os');
 const path = require('path');
+const sharp = require('sharp');
 const restify = require('restify');
+
+const TARGETSIZES = [
+  { w: 256, h: 256 },
+  { w: 1000, h: 1000 }
+];
 
 module.exports = function config(opts) {
   opts = opts || {};
@@ -33,10 +39,25 @@ module.exports = function config(opts) {
 
       await fse.mkdirsAsync(absdir)
 
-      res.send(await P.map(Object.keys(req.files), key => {
+      const metas = await P.map(Object.keys(req.files), async key => {
         const file = req.files[key]
         const newname = crypto.randomBytes(4).toString('hex').toUpperCase();
         const ext = extFor(file.type);
+
+        const image = fse.readFileAsync(file.path);
+        const baseurl = `/-/files/${dir}/${newname}`;
+        const basename = path.resolve(absdir, newname);
+        const sizes = P.reduce(TARGETSIZES, async (out, {w, h}) => {
+          const filename = `${basename}-${w}x${h}.jpeg`;
+          const fileurl = `${baseurl}-${w}x${h}.jpeg`;
+          await sharp(await image)
+                  .resize(w, h)
+                  .toFormat('jpeg')
+                  .toFile(filename);
+          out[`${w}x${h}`] = fileurl;
+          return out;
+        }, {});
+
         const meta = {
           user: tok.user_id,
           team: tok.team_id,
@@ -44,13 +65,19 @@ module.exports = function config(opts) {
           name: req.params.title || file.name,
           type: file.type,
           unfurl: req.params.unfurl == 'true',
-          path: `/-/files/${dir}/${newname}.${ext}`
+          sizes: await sizes,
+          path: `${baseurl}.${ext}`
         };
-        return P.join(
+
+        await P.join(
           fse.moveAsync(file.path, path.resolve(absdir, `${newname}.${ext}`)),
           fse.writeJsonAsync(path.resolve(absdir,`${newname}.json`), meta)
-        ).then(() => meta)
-      }))
+        )
+
+        return meta;
+      })
+
+      res.send(metas)
 
       next();
     } catch(e) {
