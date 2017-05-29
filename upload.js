@@ -5,6 +5,7 @@ const fse = require('fs-extra-promise');
 const os = require('os');
 const path = require('path');
 const restify = require('restify');
+const extFor = require('./lib/ext-for-type');
 const addResizedImages = require('./lib/add-resized-images');
 
 module.exports = function config(opts) {
@@ -66,13 +67,3 @@ module.exports = function config(opts) {
     }
   }
 }
-
-function extFor(type) {
-  const m = /^image\/(.*)/.exec(type)
-  if (m) {
-    return m[1];
-  } else {
-    throw new Error(`${type} is not a recognized type`);
-  }
-}
-
