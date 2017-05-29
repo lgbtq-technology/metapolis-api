@@ -4,19 +4,15 @@ require('redis-mock');
 require.cache[require.resolve('redis')] = require.cache[require.resolve('redis-mock')];
 
 const FormData = require('form-data');
-const P = require('bluebird');
 const fetch = require('node-fetch');
 const fs = require('fs-extra-promise');
 const path = require('path');
 const pool = require('@npmcorp/redis-pool');
-const restify = require('restify');
 const restifyFixture = require('restify-test-fixture');
 const tap = require('tap');
 const upload = require('../upload')
 const withFixtures = require('with-fixtures');
 const { tempdirFixture } = require('mixed-fixtures');
-
-P.promisifyAll(restify.JsonClient.prototype);
 
 tap.test('upload handler', async t => {
 
@@ -43,7 +39,7 @@ tap.test('upload handler', async t => {
       user_id: 'UTEST'
     })));
 
-    form.append('file-1', fs.createReadStream(path.resolve(__dirname, 'test.jpg')));
+    form.append('file-1', fs.createReadStream(path.resolve(__dirname, 'test.png')));
     form.append('unfurl', 'false');
     form.append('title', 'Test 123');
 
@@ -58,14 +54,22 @@ tap.test('upload handler', async t => {
     t.ok(Array.isArray(metadata), 'metadata is an array');
     t.equal(metadata.length, 1, 'metadata has one entry');
 
-    const copied = fs.readFileAsync(path.resolve(root, 'TTEST', 'UTEST', metadata[0].file + '.jpeg'))
-    const original = fs.readFileAsync(path.resolve(__dirname, 'test.jpg'))
+    const copied = fs.readFileAsync(path.resolve(root, 'TTEST', 'UTEST', metadata[0].file + '.png'))
+    const original = fs.readFileAsync(path.resolve(__dirname, 'test.png'))
     const filemetadata = fs.readJsonAsync(path.resolve(root, 'TTEST', 'UTEST', metadata[0].file + '.json'))
 
     t.ok((await copied).equals(await original), 'file data is the same');
     t.ok(await filemetadata, 'metadata file is JSON');
+
+    t.ok(await fs.existsAsync(u2p(metadata[0].sizes['256x256'])), '256x256 thumbnail exists');
+    t.ok(await fs.existsAsync(u2p(metadata[0].sizes['1000x1000'])), '1000x1000 image exists');
+
+    function u2p(url) {
+      return url.replace('/-/files', root);
+    }
   });
 })
+
 
 tap.test('teardown', async () => {
   await pool.drain()

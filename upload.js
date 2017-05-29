@@ -5,6 +5,7 @@ const fse = require('fs-extra-promise');
 const os = require('os');
 const path = require('path');
 const restify = require('restify');
+const addResizedImages = require('./lib/add-resized-images');
 
 module.exports = function config(opts) {
   opts = opts || {};
@@ -33,24 +34,31 @@ module.exports = function config(opts) {
 
       await fse.mkdirsAsync(absdir)
 
-      res.send(await P.map(Object.keys(req.files), key => {
+      const metas = await P.map(Object.keys(req.files), async key => {
         const file = req.files[key]
         const newname = crypto.randomBytes(4).toString('hex').toUpperCase();
         const ext = extFor(file.type);
-        const meta = {
+
+        const baseurl = `/-/files/${dir}/${newname}`;
+
+        await fse.moveAsync(file.path, path.resolve(absdir, `${newname}.${ext}`));
+
+        const meta = await addResizedImages({
           user: tok.user_id,
           team: tok.team_id,
           file: newname,
           name: req.params.title || file.name,
           type: file.type,
           unfurl: req.params.unfurl == 'true',
-          path: `/-/files/${dir}/${newname}.${ext}`
-        };
-        return P.join(
-          fse.moveAsync(file.path, path.resolve(absdir, `${newname}.${ext}`)),
-          fse.writeJsonAsync(path.resolve(absdir,`${newname}.json`), meta)
-        ).then(() => meta)
-      }))
+          path: `${baseurl}.${ext}`
+        }, root);
+
+        await fse.writeJsonAsync(path.resolve(absdir,`${newname}.json`), meta);
+
+        return meta;
+      })
+
+      res.send(metas)
 
       next();
     } catch(e) {
@@ -67,3 +75,4 @@ function extFor(type) {
     throw new Error(`${type} is not a recognized type`);
   }
 }
+

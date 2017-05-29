@@ -19,12 +19,13 @@
   "homepage": "https://github.com/lgbtq-technology/lgbtq-helper-api#readme",
   "dependencies": {
     "@npmcorp/redis-pool": "^2.0.1",
-    "async-to-gen": "^1.3.0",
-    "bluebird": "^3.4.6",
-    "fs-extra-promise": "^0.4.1",
-    "node-fetch": "^1.6.3",
+    "async-to-gen": "^1.3.3",
+    "bluebird": "^3.5.0",
+    "fs-extra-promise": "^1.0.1",
+    "node-fetch": "^1.7.0",
     "pump": "^1.0.2",
-    "restify": "^4.3.0"
+    "restify": "^4.3.0",
+    "sharp": "^0.17.2"
   },
   "eslintConfig": {
     "parserOptions": {
@@ -41,13 +42,13 @@
     }
   },
   "devDependencies": {
-    "form-data": "^2.1.2",
+    "form-data": "^2.1.4",
     "mixed-fixtures": "^1.0.0",
-    "redis-mock": "^0.16.0",
+    "redis-mock": "^0.17.0",
     "restify-test-fixture": "^1.0.4",
     "spawn-require": "^0.1.0",
     "tap": "^8.0.1",
-    "with-fixtures": "^1.1.0"
+    "with-fixtures": "^1.2.0"
   },
   "nyc": {
     "require": [
