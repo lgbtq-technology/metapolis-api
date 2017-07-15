@@ -22,9 +22,9 @@
     "async-to-gen": "^1.3.3",
     "bluebird": "^3.5.0",
     "fs-extra-promise": "^1.0.1",
-    "node-fetch": "^1.7.0",
+    "node-fetch": "^1.7.1",
     "pump": "^1.0.2",
-    "restify": "^4.3.0",
+    "restify": "^4.3.1",
     "sharp": "^0.17.2"
   },
   "eslintConfig": {
@@ -42,9 +42,9 @@
     }
   },
   "devDependencies": {
-    "form-data": "^2.1.4",
+    "form-data": "^2.2.0",
     "mixed-fixtures": "^1.0.0",
-    "redis-mock": "^0.17.0",
+    "redis-mock": "^0.17.1",
     "restify-test-fixture": "^1.0.4",
     "spawn-require": "^0.1.0",
     "tap": "^8.0.1",
