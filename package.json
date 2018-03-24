@@ -22,7 +22,7 @@
     "async-to-gen": "^1.4.0",
     "bluebird": "^3.5.1",
     "fs-extra-promise": "^1.0.1",
-    "node-fetch": "^1.7.3",
+    "node-fetch": "^2.1.1",
     "pump": "^3.0.0",
     "restify": "^4.3.2",
     "sharp": "^0.20.1"
