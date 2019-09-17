@@ -20,12 +20,12 @@
   "dependencies": {
     "@npmcorp/redis-pool": "^2.0.1",
     "async-to-gen": "^1.4.0",
-    "bluebird": "^3.5.2",
+    "bluebird": "^3.5.5",
     "fs-extra-promise": "^1.0.1",
-    "node-fetch": "^2.2.0",
+    "node-fetch": "^2.6.0",
     "pump": "^3.0.0",
     "restify": "^4.3.4",
-    "sharp": "^0.20.8"
+    "sharp": "^0.23.0"
   },
   "eslintConfig": {
     "parserOptions": {
@@ -42,12 +42,12 @@
     }
   },
   "devDependencies": {
-    "form-data": "^2.3.2",
+    "form-data": "^2.5.1",
     "mixed-fixtures": "^1.0.0",
-    "redis-mock": "^0.21.0",
+    "redis-mock": "^0.46.0",
     "restify-test-fixture": "^1.0.4",
     "spawn-require": "^0.1.0",
-    "tap": "^11.1.5",
+    "tap": "^14.6.4",
     "with-fixtures": "^1.2.0"
   },
   "nyc": {
