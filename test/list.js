@@ -3,7 +3,6 @@
 require('redis-mock');
 require.cache[require.resolve('redis')] = require.cache[require.resolve('redis-mock')];
 
-const P = require('bluebird');
 const fetch = require('node-fetch');
 const fs = require('fs-extra-promise');
 const path = require('path');
@@ -13,9 +12,14 @@ const restifyFixture = require('restify-test-fixture');
 const tap = require('tap');
 const list = require('../list')
 const withFixtures = require('with-fixtures');
+const util = require('util')
 const { tempdirFixture } = require('mixed-fixtures');
 
-P.promisifyAll(restify.JsonClient.prototype);
+for (const x in restify.JsonClient.prototype) {
+  if (typeof restify.JsonClient.prototype[x] == 'function') {
+    restify.JsonClient.prototype[x] = util.promisify(restify.JsonClient.prototype[x])
+  }
+}
 
 tap.test('list handler works', async t => {
 

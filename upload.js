@@ -1,4 +1,3 @@
-const P = require('bluebird');
 const auth = require('./lib/auth');
 const crypto = require('crypto');
 const fse = require('fs-extra-promise');
@@ -35,7 +34,7 @@ module.exports = function config(opts) {
 
       await fse.mkdirsAsync(absdir)
 
-      const metas = await P.map(Object.keys(req.files), async key => {
+      const metas = await Promise.all(Object.keys(req.files).map(async key => {
         const file = req.files[key]
         const newname = crypto.randomBytes(4).toString('hex').toUpperCase();
         const ext = extFor(file.type);
@@ -57,7 +56,7 @@ module.exports = function config(opts) {
         await fse.writeJsonAsync(path.resolve(absdir,`${newname}.json`), meta);
 
         return meta;
-      })
+      }))
 
       res.send(metas)
 

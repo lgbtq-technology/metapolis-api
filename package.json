@@ -19,7 +19,6 @@
   "homepage": "https://github.com/lgbtq-technology/lgbtq-helper-api#readme",
   "dependencies": {
     "@npmcorp/redis-pool": "^2.0.1",
-    "bluebird": "^3.5.5",
     "fs-extra-promise": "^1.0.1",
     "node-fetch": "^2.6.0",
     "pump": "^3.0.0",
