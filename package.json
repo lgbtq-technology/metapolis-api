@@ -23,7 +23,7 @@
     "node-fetch": "^2.6.0",
     "pump": "^3.0.0",
     "restify": "^4.3.4",
-    "sharp": "^0.23.0"
+    "sharp": "^0.23.4"
   },
   "engines": {
     "node": ">10.0.0"
@@ -45,10 +45,10 @@
   "devDependencies": {
     "form-data": "^2.5.1",
     "mixed-fixtures": "^1.0.0",
-    "redis-mock": "^0.46.0",
+    "redis-mock": "^0.47.0",
     "restify-test-fixture": "^1.0.4",
     "spawn-require": "^0.1.0",
-    "tap": "^14.6.4",
+    "tap": "^14.10.5",
     "with-fixtures": "^1.2.0"
   }
 }
