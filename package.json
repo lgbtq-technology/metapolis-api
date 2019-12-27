@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node .",
-    "test": "spawn-require async-to-gen/register -- tap test"
+    "test": "tap test"
   },
   "repository": {
     "type": "git",
@@ -19,13 +19,15 @@
   "homepage": "https://github.com/lgbtq-technology/lgbtq-helper-api#readme",
   "dependencies": {
     "@npmcorp/redis-pool": "^2.0.1",
-    "async-to-gen": "^1.4.0",
     "bluebird": "^3.5.5",
     "fs-extra-promise": "^1.0.1",
     "node-fetch": "^2.6.0",
     "pump": "^3.0.0",
     "restify": "^4.3.4",
     "sharp": "^0.23.0"
+  },
+  "engines": {
+    "node": ">10.0.0"
   },
   "eslintConfig": {
     "parserOptions": {
@@ -49,10 +51,5 @@
     "spawn-require": "^0.1.0",
     "tap": "^14.6.4",
     "with-fixtures": "^1.2.0"
-  },
-  "nyc": {
-    "require": [
-      "async-to-gen/register"
-    ]
   }
 }
