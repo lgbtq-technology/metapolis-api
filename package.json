@@ -19,10 +19,11 @@
   "homepage": "https://github.com/lgbtq-technology/lgbtq-helper-api#readme",
   "dependencies": {
     "@npmcorp/redis-pool": "^2.0.1",
-    "fs-extra-promise": "^1.0.1",
+    "move-file": "^1.2.0",
     "node-fetch": "^2.6.0",
     "pump": "^3.0.0",
     "restify": "^8.5.1",
+    "restify-errors": "^8.0.2",
     "sharp": "^0.23.4"
   },
   "engines": {
@@ -45,7 +46,9 @@
   "devDependencies": {
     "form-data": "^3.0.0",
     "mixed-fixtures": "^1.0.0",
+    "mkdirp": "^0.5.1",
     "redis-mock": "^0.47.0",
+    "restify-clients": "^2.6.8",
     "restify-test-fixture": "^1.0.4",
     "spawn-require": "^0.1.0",
     "tap": "^14.10.5",

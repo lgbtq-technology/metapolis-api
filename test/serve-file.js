@@ -4,14 +4,19 @@ require('redis-mock');
 require.cache[require.resolve('redis')] = require.cache[require.resolve('redis-mock')];
 
 const fetch = require('node-fetch');
-const fs = require('fs-extra-promise');
+const fs = require('fs');
 const path = require('path');
 const pool = require('@npmcorp/redis-pool');
 const restifyFixture = require('restify-test-fixture');
 const tap = require('tap');
 const serveFile = require('../serve-file')
 const withFixtures = require('with-fixtures');
+const util = require('util');
 const { tempdirFixture } = require('mixed-fixtures');
+const mkdirp = util.promisify(require('mkdirp'));
+const readFile = util.promisify(fs.readFile);
+const writeFile = util.promisify(fs.writeFile);
+const unlink = util.promisify(fs.unlink);
 
 function testPath(path, contentType) {
   return tap.test('serve-file handler', async t => {
@@ -71,11 +76,11 @@ async function testImageFixture(fixture) {
   const dest = path.join(dir, 'test.png');
   const destjson = path.join(dir, 'test.json');
 
-  await fs.mkdirpAsync(dir);
+  await mkdirp(dir);
 
   await Promise.all([
-    fs.writeFileAsync(dest, await fs.readFileAsync(src)),
-    fs.writeJsonAsync(destjson, {
+    writeFile(dest, await readFile(src)),
+    writeFile(destjson, JSON.stringify({
       user: "UTEST",
       team: "TTEST",
       file: "test",
@@ -83,14 +88,14 @@ async function testImageFixture(fixture) {
       type: "image/png",
       unfurl: true,
       path: "/-/files/TTEST/UTEST/test.png"
-    }),
+    })),
   ])
 
   return {
     async done() {
       return Promise.all([
-	fs.unlinkAsync(dest),
-	fs.unlinkAsync(destjson)
+	unlink(dest),
+	unlink(destjson)
       ]);
     }
   };

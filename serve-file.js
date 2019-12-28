@@ -1,4 +1,4 @@
-const fse = require('fs-extra-promise');
+const fs = require('fs');
 const path = require('path');
 const pump = require('pump');
 const metadataForImage = require('./metadata').metadataForImage;
@@ -23,11 +23,11 @@ module.exports = function (opts) {
             const metadata = await metadataForImage(file, root, req.params.team, req.params.user);
             if (size) {
                 res.setHeader('Content-Type', 'image/jpeg');
-                pump(fse.createReadStream(path.resolve(dir, `${file}-${size}.jpeg`)), res, next);
+                pump(fs.createReadStream(path.resolve(dir, `${file}-${size}.jpeg`)), res, next);
             } else {
                 res.setHeader('Content-Type', metadata.type);
                 const ext = extFor(metadata.type);
-                pump(fse.createReadStream(path.resolve(dir, `${file}.${ext}`)), res, next);
+                pump(fs.createReadStream(path.resolve(dir, `${file}.${ext}`)), res, next);
             }
         } catch (e) {
             next(e);

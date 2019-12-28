@@ -4,16 +4,18 @@ require('redis-mock');
 require.cache[require.resolve('redis')] = require.cache[require.resolve('redis-mock')];
 
 const fetch = require('node-fetch');
-const fs = require('fs-extra-promise');
 const path = require('path');
 const pool = require('@npmcorp/redis-pool');
-const restify = require('restify');
+const restify = require('restify-clients');
 const restifyFixture = require('restify-test-fixture');
 const tap = require('tap');
 const list = require('../list')
 const withFixtures = require('with-fixtures');
 const util = require('util')
 const { tempdirFixture } = require('mixed-fixtures');
+
+const writeFile = util.promisify(require('fs').writeFile);
+const mkdir = util.promisify(require('mkdirp'))
 
 for (const x in restify.JsonClient.prototype) {
   if (typeof restify.JsonClient.prototype[x] == 'function') {
@@ -30,14 +32,14 @@ tap.test('list handler works', async t => {
     root
   })
 
-  await fs.mkdirsAsync(path.resolve(root, 'TTEST', 'UTEST'));
+  await mkdir(path.resolve(root, 'TTEST', 'UTEST'));
 
-  await fs.writeJsonAsync(path.resolve(root, 'TTEST', 'UTEST', 'F123.json'), {
+  await writeFile(path.resolve(root, 'TTEST', 'UTEST', 'F123.json'), JSON.stringify({
     name: 'somefile.jpg',
     title: 'test',
     user: 'UTEST',
     id: 'F123'
-  });
+  }));
 
   const s = restifyFixture(server => {
     server.get('/', handler);

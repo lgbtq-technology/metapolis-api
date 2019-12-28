@@ -1,11 +1,14 @@
 const auth = require('./lib/auth');
 const crypto = require('crypto');
-const fse = require('fs-extra-promise');
 const os = require('os');
 const path = require('path');
 const restify = require('restify');
 const extFor = require('./lib/ext-for-type');
 const addResizedImages = require('./lib/add-resized-images');
+const util = require('util');
+const mkdirp = util.promisify(require('mkdirp'));
+const move = require('move-file');
+const writeFile = util.promisify(require('fs').writeFile);
 
 module.exports = function config(opts) {
   opts = opts || {};
@@ -32,7 +35,7 @@ module.exports = function config(opts) {
       const absdir = path.resolve(root, tok.team_id, tok.user_id);
       const dir = path.relative(root, absdir);
 
-      await fse.mkdirsAsync(absdir)
+      await mkdirp(absdir)
 
       const metas = await Promise.all(Object.keys(req.files).map(async key => {
         const file = req.files[key]
@@ -41,7 +44,7 @@ module.exports = function config(opts) {
 
         const baseurl = `/-/files/${dir}/${newname}`;
 
-        await fse.moveAsync(file.path, path.resolve(absdir, `${newname}.${ext}`));
+        await move(file.path, path.resolve(absdir, `${newname}.${ext}`));
 
         const meta = await addResizedImages({
           user: tok.user_id,
@@ -53,7 +56,7 @@ module.exports = function config(opts) {
           path: `${baseurl}.${ext}`
         }, root);
 
-        await fse.writeJsonAsync(path.resolve(absdir,`${newname}.json`), meta);
+        await writeFile(path.resolve(absdir,`${newname}.json`), JSON.stringify(meta));
 
         return meta;
       }))
