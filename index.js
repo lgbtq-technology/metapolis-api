@@ -4,14 +4,7 @@ const restify = require('restify');
 
 var server = restify.createServer();
 
-server.use(restify.CORS({
-    credentials: true
-}));
-
-
-server.use(restify.CORS());
-
-server.post('/-/login', restify.bodyParser(), require('./login'));
+server.post('/-/login', restify.plugins.jsonBodyParser(), require('./login'));
 
 server.get('/-/files/:team/:user/:file', require('./serve-file')({ root: __dirname }));
 server.get('/-/metadata/:team/:user/:file', require('./metadata')({ root: __dirname }));

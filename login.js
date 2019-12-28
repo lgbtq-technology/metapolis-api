@@ -12,12 +12,12 @@ if (!client_id || !client_secret) {
 
 module.exports = async function (req, res, next) {
   try {
-    if (req.params.code) {
+    if (req.body.code) {
       const body = await slackFetch('https://slack.com/api/oauth.access', Object.assign({
         client_id,
         client_secret,
-        code: req.params.code
-      }, req.params.redirect_uri ? { redirect_uri: req.params.redirect_uri } : {}));
+        code: req.body.code
+      }, req.body.redirect_uri ? { redirect_uri: req.body.redirect_uri } : {}));
 
       if (!body.access_token) {
         throw new Error("No access token granted");

@@ -13,10 +13,10 @@ module.exports = function config(opts) {
 
           await slackFetch('https://slack.com/api/chat.postMessage', {
             token: tok,
-            channel: res.params.channel,
+            channel: req.body.channel,
             parse: true,
             as_user: true,
-            text: res.params.image_url
+            text: req.body.image_url
           });
 
           res.send("yay")

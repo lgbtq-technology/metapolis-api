@@ -10,7 +10,7 @@ module.exports = function config(opts) {
   const root = opts.root || __dirname;
 
   return [
-    restify.queryParser(),
+    restify.plugins.queryParser(),
     list
   ];
 

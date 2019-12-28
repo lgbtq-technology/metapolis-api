@@ -13,7 +13,7 @@ module.exports = function config(opts) {
   const root = opts.root || __dirname;
 
   return [
-    restify.bodyParser({
+    restify.plugins.bodyParser({
       maxBodySize: 0,
       mapParams: true,
       mapFiles: true,
@@ -47,9 +47,9 @@ module.exports = function config(opts) {
           user: tok.user_id,
           team: tok.team_id,
           file: newname,
-          name: req.params.title || file.name,
+          name: req.body.title || file.name,
           type: file.type,
-          unfurl: req.params.unfurl == 'true',
+          unfurl: req.body.unfurl == 'true',
           path: `${baseurl}.${ext}`
         }, root);
 
