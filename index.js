@@ -1,6 +1,5 @@
 "use strict";
 
-require('async-to-gen/register')
 const restify = require('restify');
 
 var server = restify.createServer();
