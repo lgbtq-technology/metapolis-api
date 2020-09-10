@@ -20,7 +20,7 @@
   "dependencies": {
     "@npmcorp/redis-pool": "^2.0.1",
     "move-file": "^1.2.0",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "pump": "^3.0.0",
     "restify": "^8.5.1",
     "restify-errors": "^8.0.2",
